@@ -1,0 +1,12 @@
+[
+  {
+    "guid": "974395db-b31d-46a2-bc86-ef9aa5ac04dd",
+    "name": "Meilisearch",
+    "description": "This is a plugin that try to use Meilisearch to speedup the search of jellyfin. Inspired by Jellysearch",
+    "overview": "A Meilisearch Plugin for Jellyfin",
+    "owner": "marcusds",
+    "category": "General",
+    "imageUrl": "https://raw.githubusercontent.com/meilisearch/meilisearch/refs/heads/main/assets/meilisearch-logo-dark.svg",
+    "versions": []
+  }
+]
