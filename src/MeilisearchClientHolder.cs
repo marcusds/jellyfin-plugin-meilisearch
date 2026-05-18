@@ -10,7 +10,8 @@ public class MeilisearchClientHolder(ILogger<MeilisearchClientHolder> logger, IS
     private static readonly string[] SearchableAttributes =
     [
         "name", "sortName", "artists", "albumArtists", "originalTitle", "productionYear", "seriesName", "genres",
-        "tags", "studios", "actors", "directors", "writers", "overview", "path", "tagline"
+        "tags", "studios", "actors", "directors", "writers", "producers", "officialRating", "languages",
+        "overview", "path", "tagline"
     ];
 
     private readonly SemaphoreSlim _reconnectLock = new(1, 1);
@@ -113,7 +114,7 @@ public class MeilisearchClientHolder(ILogger<MeilisearchClientHolder> logger, IS
         var index = meilisearch.Index(indexName);
 
         await index.UpdateFilterableAttributesAsync(
-            ["type", "parentId", "isFolder"]
+            ["type", "parentId", "isFolder", "productionYear", "officialRating", "languages"]
         );
 
         await index.UpdateSortableAttributesAsync(

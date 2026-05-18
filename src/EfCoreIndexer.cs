@@ -32,13 +32,16 @@ public class EfCoreIndexer(
                 Writers = x.Peoples!
                     .Where(p => p.People.PersonType == "Writer")
                     .Select(p => p.People.Name).ToArray(),
+                Producers = x.Peoples!
+                    .Where(p => p.People.PersonType == "Producer")
+                    .Select(p => p.People.Name).ToArray(),
             })
             .ToListAsync();
 
-        return entities.Select(e => ToMeilisearchItem(e.Item, e.Actors, e.Directors, e.Writers)).ToImmutableList();
+        return entities.Select(e => ToMeilisearchItem(e.Item, e.Actors, e.Directors, e.Writers, e.Producers)).ToImmutableList();
     }
 
-    private static MeilisearchItem ToMeilisearchItem(BaseItemEntity item, string[] actors, string[] directors, string[] writers)
+    private static MeilisearchItem ToMeilisearchItem(BaseItemEntity item, string[] actors, string[] directors, string[] writers, string[] producers)
     {
         return new MeilisearchItem(
             Guid: item.Id.ToString(),
@@ -62,7 +65,10 @@ public class EfCoreIndexer(
             SortName: item.SortName,
             Actors: actors.Length > 0 ? actors : null,
             Directors: directors.Length > 0 ? directors : null,
-            Writers: writers.Length > 0 ? writers : null
+            Writers: writers.Length > 0 ? writers : null,
+            Producers: producers.Length > 0 ? producers : null,
+            OfficialRating: item.OfficialRating,
+            Languages: item.Languages?.Split('|').Where(l => !string.IsNullOrWhiteSpace(l)).ToArray()
         );
     }
 }
