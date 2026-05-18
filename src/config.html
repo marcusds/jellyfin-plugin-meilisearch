@@ -93,6 +93,27 @@
                 </div>
                 <div class="checkboxContainer checkboxContainer-withDescription">
                     <label class="emby-checkbox-label">
+                        <input id="HybridSearchEnabled" is="emby-checkbox" name="HybridSearchEnabled" type="checkbox"/>
+                        <span>Enable Hybrid Search</span>
+                    </label>
+                    <div class="fieldDescription checkboxFieldDescription">
+                        Combines full-text keyword search with vector/semantic search. Requires a configured embedder in Meilisearch.
+                    </div>
+                </div>
+                <div id="hybridSearchOptions" style="display: none">
+                    <div class="inputContainer">
+                        <label class="inputLabel inputLabelUnfocused" for="HybridEmbedderName">Embedder Name</label>
+                        <input id="HybridEmbedderName" is="emby-input" name="HybridEmbedderName" type="text" placeholder="e.g. cloudflare"/>
+                        <div class="fieldDescription">Name of the embedder configured in your Meilisearch instance.</div>
+                    </div>
+                    <div class="inputContainer">
+                        <label class="inputLabel inputLabelUnfocused" for="HybridSemanticRatio">Semantic Ratio</label>
+                        <input id="HybridSemanticRatio" is="emby-input" name="HybridSemanticRatio" type="number" min="0" max="1" step="0.05"/>
+                        <div class="fieldDescription">Balance between keyword (0.0) and semantic/vector (1.0) results. Default: 0.5.</div>
+                    </div>
+                </div>
+                <div class="checkboxContainer checkboxContainer-withDescription">
+                    <label class="emby-checkbox-label">
                         <input id="Debug" is="emby-checkbox" name="Debug" type="checkbox"/>
                         <span>Debug Output</span>
                     </label>
@@ -150,6 +171,13 @@
             reindexBtn.addEventListener('click', () => updateStatus('reindex'));
 
 
+            const hybridEnabledEl = document.querySelector('#HybridSearchEnabled');
+            const hybridOptionsEl = document.querySelector('#hybridSearchOptions');
+            const toggleHybridOptions = () => {
+                hybridOptionsEl.style.display = hybridEnabledEl.checked ? 'block' : 'none';
+            };
+            hybridEnabledEl.addEventListener('change', toggleHybridOptions);
+
             document.querySelector('#MeilisearchConfigPage')
                 .addEventListener('pageshow', function () {
                     Dashboard.showLoadingMsg();
@@ -159,6 +187,10 @@
                         document.querySelector('#Debug').checked = config.Debug;
                         document.querySelector('#IndexName').value = config.IndexName;
                         document.querySelector('#MatchingStrategy').value = config.MatchingStrategy || 'last';
+                        hybridEnabledEl.checked = config.HybridSearchEnabled || false;
+                        document.querySelector('#HybridEmbedderName').value = config.HybridEmbedderName || '';
+                        document.querySelector('#HybridSemanticRatio').value = config.HybridSemanticRatio != null ? config.HybridSemanticRatio : 0.5;
+                        toggleHybridOptions();
                         Dashboard.hideLoadingMsg();
                     });
                     updateStatus('status');
@@ -173,6 +205,9 @@
                         config.Debug = document.querySelector('#Debug').checked;
                         config.IndexName = document.querySelector('#IndexName').value;
                         config.MatchingStrategy = document.querySelector('#MatchingStrategy').value;
+                        config.HybridSearchEnabled = hybridEnabledEl.checked;
+                        config.HybridEmbedderName = document.querySelector('#HybridEmbedderName').value;
+                        config.HybridSemanticRatio = parseFloat(document.querySelector('#HybridSemanticRatio').value) || 0.5;
                         ApiClient.updatePluginConfiguration(id, config).then(result => {
                             Dashboard.processPluginConfigurationUpdateResult(result);
                         });

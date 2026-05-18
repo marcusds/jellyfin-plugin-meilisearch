@@ -56,9 +56,21 @@ public class MeilisearchRepositoryDecorator(
 
         try
         {
-            var matchingStrategy = Plugin.Instance?.Configuration.MatchingStrategy ?? "last";
+            var config = Plugin.Instance?.Configuration;
+            var matchingStrategy = config?.MatchingStrategy ?? "last";
             var limit = Math.Max(filter.Limit is > 0 ? filter.Limit.Value : 30, 1);
             var typeFilter = string.Join(" OR ", types.Select(t => $"type = \"{t}\""));
+
+            HybridSearch? hybrid = null;
+            if (config?.HybridSearchEnabled == true && !string.IsNullOrWhiteSpace(config.HybridEmbedderName))
+            {
+                hybrid = new HybridSearch
+                {
+                    Embedder = config.HybridEmbedderName,
+                    SemanticRatio = (float)config.HybridSemanticRatio,
+                };
+            }
+
             var result = await index.SearchAsync<MeilisearchItem>(
                 searchTerm,
                 new SearchQuery
@@ -67,6 +79,7 @@ public class MeilisearchRepositoryDecorator(
                     Offset = filter.StartIndex ?? 0,
                     Limit = limit,
                     MatchingStrategy = matchingStrategy,
+                    Hybrid = hybrid,
                 }
             ).ConfigureAwait(false);
 
