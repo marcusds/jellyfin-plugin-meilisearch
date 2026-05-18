@@ -16,6 +16,11 @@ on:
         default: "net9.0"
         description: "The .NET target to set for JPRM"
         type: string
+      prerelease:
+        required: false
+        default: "false"
+        description: "Mark the GitHub Release as a pre-release"
+        type: string
 
 jobs:
   build:
@@ -86,6 +91,7 @@ jobs:
         with:
           artifacts: ./*
           bodyFile: /tmp/changelog.md
+          prerelease: ${{ inputs.prerelease || 'false' }}
 
   publish:
     needs:
