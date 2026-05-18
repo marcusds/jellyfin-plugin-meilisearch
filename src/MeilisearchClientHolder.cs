@@ -10,7 +10,7 @@ public class MeilisearchClientHolder(ILogger<MeilisearchClientHolder> logger, IS
     private static readonly string[] SearchableAttributes =
     [
         "name", "sortName", "artists", "albumArtists", "originalTitle", "productionYear", "seriesName", "genres",
-        "tags", "studios", "overview", "path", "tagline"
+        "tags", "studios", "people", "overview", "path", "tagline"
     ];
 
     private readonly SemaphoreSlim _reconnectLock = new(1, 1);

@@ -20,12 +20,17 @@ public class EfCoreIndexer(
         var entities = await context.BaseItems
             .AsNoTracking()
             .Where(x => x.Type != null && includedTypes.Contains(x.Type))
+            .Select(x => new
+            {
+                Item = x,
+                People = x.Peoples!.Select(p => p.People.Name).ToArray()
+            })
             .ToListAsync();
 
-        return entities.Select(ToMeilisearchItem).ToImmutableList();
+        return entities.Select(e => ToMeilisearchItem(e.Item, e.People)).ToImmutableList();
     }
 
-    private static MeilisearchItem ToMeilisearchItem(BaseItemEntity item)
+    private static MeilisearchItem ToMeilisearchItem(BaseItemEntity item, string[] people)
     {
         return new MeilisearchItem(
             Guid: item.Id.ToString(),
@@ -46,7 +51,8 @@ public class EfCoreIndexer(
             CriticRating: item.CriticRating,
             IsFolder: item.IsFolder,
             Tagline: item.Tagline,
-            SortName: item.SortName
+            SortName: item.SortName,
+            People: people.Length > 0 ? people : null
         );
     }
 }
