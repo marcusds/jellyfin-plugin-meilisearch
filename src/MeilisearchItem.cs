@@ -20,5 +20,7 @@ public record MeilisearchItem(
     string? Path,
     string? Tagline,
     string? SortName,
-    string[]? People
+    string[]? Actors,
+    string[]? Directors,
+    string[]? Writers
 );
