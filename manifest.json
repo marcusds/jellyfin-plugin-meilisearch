@@ -9,6 +9,14 @@
         "imageUrl": "https://raw.githubusercontent.com/meilisearch/meilisearch/refs/heads/main/assets/meilisearch-logo-dark.svg",
         "versions": [
             {
+                "version": "1.11.4.0",
+                "changelog": "- [e349f10] feat: replace people with actors, directors, writers for role-aware search\n- [2dcb23e] Update manifest.json for release 1.11.3.0",
+                "targetAbi": "10.11.7.0",
+                "sourceUrl": "https://github.com/marcusds/jellyfin-plugin-meilisearch/releases/download/1.11.4.0/meilisearch_1.11.4.0.zip",
+                "checksum": "f1df030e0c8f3b356f29813229bbc7d8",
+                "timestamp": "2026-05-18T01:07:01Z"
+            },
+            {
                 "version": "1.11.3.0",
                 "changelog": "- [f47a8e9] feat: index cast and crew names to enable people-based search\n- [8bcd246] Update manifest.json for release 1.11.2.0",
                 "targetAbi": "10.11.7.0",
