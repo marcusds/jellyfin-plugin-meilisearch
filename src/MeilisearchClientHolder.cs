@@ -10,7 +10,7 @@ public class MeilisearchClientHolder(ILogger<MeilisearchClientHolder> logger, IS
     private static readonly string[] SearchableAttributes =
     [
         "name", "sortName", "artists", "albumArtists", "originalTitle", "productionYear", "seriesName", "genres",
-        "tags", "studios", "actors", "directors", "writers", "producers", "officialRating", "languages",
+        "tags", "studios", "actors", "directors", "writers", "producers", "officialRating",
         "overview", "path", "tagline"
     ];
 
@@ -114,7 +114,7 @@ public class MeilisearchClientHolder(ILogger<MeilisearchClientHolder> logger, IS
         var index = meilisearch.Index(indexName);
 
         await index.UpdateFilterableAttributesAsync(
-            ["type", "parentId", "isFolder", "productionYear", "officialRating", "languages"]
+            ["type", "parentId", "isFolder", "productionYear", "officialRating"]
         );
 
         await index.UpdateSortableAttributesAsync(

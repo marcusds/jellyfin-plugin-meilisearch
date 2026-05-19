@@ -73,8 +73,7 @@ public class EfCoreIndexer(
             Directors: directors.Length > 0 ? Limit(directors) : null,
             Writers: writers.Length > 0 ? Limit(writers) : null,
             Producers: producers.Length > 0 ? Limit(producers) : null,
-            OfficialRating: item.OfficialRating,
-            Languages: item.Languages?.Split('|').Where(l => !string.IsNullOrWhiteSpace(l)).ToArray()
+            OfficialRating: item.OfficialRating
         );
     }
 }
