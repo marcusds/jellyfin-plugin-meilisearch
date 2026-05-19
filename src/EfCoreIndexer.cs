@@ -38,35 +38,41 @@ public class EfCoreIndexer(
             })
             .ToListAsync();
 
-        return entities.Select(e => ToMeilisearchItem(e.Item, e.Actors, e.Directors, e.Writers, e.Producers)).ToImmutableList();
+        var config = Plugin.Instance?.Configuration;
+        int overviewMax = config?.OverviewMaxLength ?? 500;
+        int listMax = config?.MaxListItems ?? 10;
+        return entities.Select(e => ToMeilisearchItem(e.Item, e.Actors, e.Directors, e.Writers, e.Producers, overviewMax, listMax)).ToImmutableList();
     }
 
-    private static MeilisearchItem ToMeilisearchItem(BaseItemEntity item, string[] actors, string[] directors, string[] writers, string[] producers)
+    private static MeilisearchItem ToMeilisearchItem(BaseItemEntity item, string[] actors, string[] directors, string[] writers, string[] producers, int overviewMax, int listMax)
     {
+        string[] Limit(string[]? arr) => arr is null ? [] : (listMax > 0 ? arr.Take(listMax).ToArray() : arr);
+        string[] LimitSplit(string? s) => s is null ? [] : Limit(s.Split('|'));
+
         return new MeilisearchItem(
             Guid: item.Id.ToString(),
             Type: item.Type,
             ParentId: item.ParentId.ToString(),
             Name: item.Name,
-            Overview: item.Overview,
+            Overview: overviewMax > 0 && item.Overview?.Length > overviewMax ? item.Overview[..overviewMax] : item.Overview,
             OriginalTitle: item.OriginalTitle,
             SeriesName: item.SeriesName,
-            Studios: item.Studios?.Split('|'),
-            Genres: item.Genres?.Split('|'),
-            Tags: item.Tags?.Split('|'),
+            Studios: LimitSplit(item.Studios),
+            Genres: LimitSplit(item.Genres),
+            Tags: LimitSplit(item.Tags),
             CommunityRating: item.CommunityRating,
             ProductionYear: item.ProductionYear,
             Path: item.Path?[0] == '%' ? null : item.Path,
-            Artists: item.Artists?.Split('|'),
-            AlbumArtists: item.AlbumArtists?.Split('|'),
+            Artists: LimitSplit(item.Artists),
+            AlbumArtists: LimitSplit(item.AlbumArtists),
             CriticRating: item.CriticRating,
             IsFolder: item.IsFolder,
             Tagline: item.Tagline,
             SortName: item.SortName,
-            Actors: actors.Length > 0 ? actors : null,
-            Directors: directors.Length > 0 ? directors : null,
-            Writers: writers.Length > 0 ? writers : null,
-            Producers: producers.Length > 0 ? producers : null,
+            Actors: actors.Length > 0 ? Limit(actors) : null,
+            Directors: directors.Length > 0 ? Limit(directors) : null,
+            Writers: writers.Length > 0 ? Limit(writers) : null,
+            Producers: producers.Length > 0 ? Limit(producers) : null,
             OfficialRating: item.OfficialRating,
             Languages: item.Languages?.Split('|').Where(l => !string.IsNullOrWhiteSpace(l)).ToArray()
         );

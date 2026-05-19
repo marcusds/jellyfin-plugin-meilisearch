@@ -112,6 +112,16 @@
                         <div class="fieldDescription">Balance between keyword (0.0) and semantic/vector (1.0) results. Default: 0.5.</div>
                     </div>
                 </div>
+                <div class="inputContainer">
+                    <label class="inputLabel inputLabelUnfocused" for="OverviewMaxLength">Overview Max Length</label>
+                    <input id="OverviewMaxLength" is="emby-input" name="OverviewMaxLength" type="number" min="0" step="50"/>
+                    <div class="fieldDescription">Maximum characters to index from overview/description fields. 0 = no limit. Default: 500.</div>
+                </div>
+                <div class="inputContainer">
+                    <label class="inputLabel inputLabelUnfocused" for="MaxListItems">Max List Items</label>
+                    <input id="MaxListItems" is="emby-input" name="MaxListItems" type="number" min="0" step="1"/>
+                    <div class="fieldDescription">Maximum items to index from list fields (actors, genres, tags, etc.). 0 = no limit. Default: 10.</div>
+                </div>
                 <div class="checkboxContainer checkboxContainer-withDescription">
                     <label class="emby-checkbox-label">
                         <input id="Debug" is="emby-checkbox" name="Debug" type="checkbox"/>
@@ -190,6 +200,8 @@
                         hybridEnabledEl.checked = config.HybridSearchEnabled || false;
                         document.querySelector('#HybridEmbedderName').value = config.HybridEmbedderName || '';
                         document.querySelector('#HybridSemanticRatio').value = config.HybridSemanticRatio != null ? config.HybridSemanticRatio : 0.5;
+                        document.querySelector('#OverviewMaxLength').value = config.OverviewMaxLength != null ? config.OverviewMaxLength : 500;
+                        document.querySelector('#MaxListItems').value = config.MaxListItems != null ? config.MaxListItems : 10;
                         toggleHybridOptions();
                         Dashboard.hideLoadingMsg();
                     });
@@ -208,6 +220,8 @@
                         config.HybridSearchEnabled = hybridEnabledEl.checked;
                         config.HybridEmbedderName = document.querySelector('#HybridEmbedderName').value;
                         config.HybridSemanticRatio = parseFloat(document.querySelector('#HybridSemanticRatio').value) || 0.5;
+                        config.OverviewMaxLength = parseInt(document.querySelector('#OverviewMaxLength').value) || 0;
+                        config.MaxListItems = parseInt(document.querySelector('#MaxListItems').value) || 0;
                         ApiClient.updatePluginConfiguration(id, config).then(result => {
                             Dashboard.processPluginConfigurationUpdateResult(result);
                         });
